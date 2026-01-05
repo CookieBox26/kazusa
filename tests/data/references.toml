@@ -1,0 +1,13 @@
+[[references]]
+title = "Attention Is All You Need"
+year = 2017
+understanding = "Transformerアーキテクチャを提案した論文"
+arxiv_id = "1706.03762"
+urls = ["https://arxiv.org/abs/1706.03762"]
+
+[[references]]
+title = "BERT: Pre-training of Deep Bidirectional Transformers"
+year = 2018
+understanding = "双方向Transformerを使った事前学習モデル"
+arxiv_id = "1810.04805"
+urls = ["https://arxiv.org/abs/1810.04805"]
