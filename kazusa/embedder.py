@@ -21,7 +21,7 @@ class Embedder:
 
     def embed_batch(self, texts: List[str]) -> np.ndarray:
         encoded_input = self.tokenizer(
-            texts, padding=True, truncation=True, max_length=512, return_tensors="pt"
+            texts, padding=True, truncation=True, return_tensors="pt"
         ).to(self.device)
         with torch.no_grad():
             model_output = self.model(**encoded_input)

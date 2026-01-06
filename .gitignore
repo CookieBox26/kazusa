@@ -1,3 +1,4 @@
 .claude/
 __pycache__/
+kazusa/references.toml
 kazusa/faiss.index

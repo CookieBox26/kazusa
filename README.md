@@ -1,13 +1,17 @@
 # Kazusa
 
-あなたの文献理解を登録して LLM と共有するための MCP サーバです。  
-あなたの文献理解をベクトル化して [faiss](https://github.com/facebookresearch/faiss) で検索します。  
+あなたの文献等への理解・感想を登録して LLM と共有するための MCP サーバです。  
+あなたの理解をベクトル化して [faiss](https://github.com/facebookresearch/faiss) で検索します。  
 MCP サーバの実装には [fastmcp](https://github.com/jlowin/fastmcp) を使用しています。  
 
 > [!IMPORTANT]
 > この MCP サーバは、あなたが登録した理解を架空の人物「かずさ」がもつものとします。  
 > 「かずさの記憶にこの言葉はありますか？」といった対話でこの MCP サーバが利用されます。  
 > 環境変数 `KAZUSA_LIBRARIAN_NAME` でお好きな名前に変更することもできます。
+
+> [!TIP]
+> サンプルでは学術文献を想定していますが、必須フィールドは `title` `understandings` だけなので、色々なエンティティへの理解を登録して利用することができます。  
+> [今のところ利用している埋め込みモデル](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)は多言語モデルなので、日本語以外の主要言語でも登録して検索することができます。  
 
 ## MCP サーバの立て方
 
@@ -24,18 +28,28 @@ pytest -m "not slow"  # 時間短縮のため一部のテストを省略する�
 
 ### 2. 文献理解の登録
 
-`kazusa/references.toml` に文献理解を登録します。
+`kazusa/references.toml` にあなたの理解を登録します。  
+`kazusa/references.sample.toml` にあるサンプルをコピーして作成してください (なお、未作成のまま MCP サーバを起動した場合はサンプルが利用されます)。
 
+```bash
+cp kazusa/references.sample.toml kazusa/references.toml
+```
+コピーした `kazusa/references.toml` を編集してください。  
+`title` `understandings` は必須フィールドです。  
+`understandings` には複数の文を登録できます。下記の例ではそれを示すために短い文を 2 つ登録していますが、[現在利用している埋め込みモデル](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)は、日本語文章であれば 200 字程度までは埋め込みできます。これよりも長すぎる文章を 1 文で登録した場合、検索用ベクトルを生成するときに切り取られます (自動チャンキングは未対応です)。
 ```toml
 [[references]]
-title = "文献のタイトル"
-year = 2023
-understanding = "あなたの理解や要約をここに書く"
-arxiv_id = "2301.12345"  # オプション
-urls = ["https://arxiv.org/abs/2301.12345"]  # オプション
+title = "Attention Is All You Need"
+understandings = [
+"Transformer アーキテクチャを導入した。",
+"Self-attention を導入した。しかし、Attention 自体はこの研究が初出というわけではない。",
+]
+year = 2017  # 出版年 (オプショナル)
+arxiv_id = "1706.03762"  # arXiv ID (オプショナル)
+urls = ["https://arxiv.org/abs/1706.03762"]  # 関連 URL (オプショナル)
 ```
 
-以下で `kazusa/faiss.index` にインデクスをビルドしておくことができますが、サーバ起動時に `kazusa/faiss.index` がなければ自動でビルドします。
+以下で `kazusa/faiss.index` にインデクスをビルドしておくことができますが、サーバ起動時にビルド済みでなければ自動でビルドします。
 ```bash
 python build_index.py
 ```
@@ -69,7 +83,7 @@ claude mcp add --transport stdio kazusa --env KAZUSA_LIBRARIAN_NAME=アリス \
   -- python ~/workspace/kazusa/run.py
 ```
 claude を起動後 `/mcp` を実行すると `kazusa` が利用できることが確認できます。  
-例えば「かずさは事前学習について何か知っていますか？」といったプロンプトで利用されるはずです。  
+例えば「かずさは事前学習について何を知っていますか？」といったプロンプトで利用されるはずです。  
 
 MCP サーバを削除したいときは以下を実行してください。  
 ```bash
@@ -78,23 +92,23 @@ claude mcp remove kazusa
 
 #### 対話例
 ```
-> かずさは事前学習について何か知っていますか？
+> かずさは事前学習について何を知っていますか？
 
-● かずさの記憶から事前学習に関する文献を検索してみますね。
+● かずさの記憶から「事前学習」に関する文献を検索してみます。
 
-● kazusa - search_references (MCP)(query: "事前学習", top_k: 5)
+● kazusa - search_references (MCP)(query: "事前学習", top_k: 10)
   ⎿  {
        "result": [
          {
-     … +41 lines (ctrl+o to expand)
+     … +46 lines (ctrl+o to expand)
 
-● はい、かずさは事前学習に関連する文献をいくつか記憶しています。以下の文献が見つかりました：
+● かずさは事前学習に関連する以下の文献を記憶しています：
 
-  1. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (2018)
-    - arXiv: 1810.04805
-    - 双方向Transformerを使った事前学習モデル。マスク言語モデルとNext Sentence Predictionで学習。
-    - https://arxiv.org/abs/1810.04805
-  2. GPT-3: Language Models are Few-Shot Learners (2020)
-    - arXiv: 2005.14165
+  主要な文献
+
+  1. BERT: Pre-training of Deep Bidirectional Transformers (2018)
+  - Transformerの事前学習手法
+  - 文章A + 文章Bを入力とした事前学習を行う
+  - https://arxiv.org/abs/1810.04805
 (略)
 ```

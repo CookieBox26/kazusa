@@ -16,3 +16,21 @@ understandings = [
 year = 2018
 arxiv_id = "1810.04805"
 urls = ["https://arxiv.org/abs/1810.04805"]
+
+[[references]]
+title = "GPT-3: Language Models are Few-Shot Learners"
+understandings = [
+"1750 億パラメータの大規模言語モデル。Few-shot 学習で様々なタスクをこなせることを示した。",
+]
+year = 2020
+arxiv_id = "2005.14165"
+urls = ["https://arxiv.org/abs/2005.14165"]
+
+[[references]]
+title = "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+understandings = [
+"外部知識ベースから関連情報を検索して生成に利用する RAG を提案した。",
+]
+year = 2020
+arxiv_id = "2005.11401"
+urls = ["https://arxiv.org/abs/2005.11401"]
