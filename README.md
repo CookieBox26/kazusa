@@ -2,7 +2,11 @@
 
 あなたの文献理解を登録して LLM と共有するための MCP サーバです。  
 あなたの文献理解をベクトル化して [faiss](https://github.com/facebookresearch/faiss) で検索します。  
-MCP サーバの実装には [fastmcp](https://github.com/jlowin/fastmcp) を使用しています。
+MCP サーバの実装には [fastmcp](https://github.com/jlowin/fastmcp) を使用しています。  
+
+> [!IMPORTANT]
+> この MCP サーバは、あなたが登録した理解を架空の友人「かずさ (Kazusa)」がもつものとします。  
+> 「かずさの記憶にこの言葉はありますか？」といった対話でこの MCP サーバが利用されます。
 
 ## MCP サーバの立て方
 
@@ -19,7 +23,7 @@ pytest -m "not slow"  # 時間短縮のため一部のテストを省略する�
 
 ### 2. 文献理解の登録
 
-`references.toml` に文献理解を登録します。
+`kazusa/references.toml` に文献理解を登録します。
 
 ```toml
 [[references]]
@@ -30,7 +34,7 @@ arxiv_id = "2301.12345"  # オプション
 urls = ["https://arxiv.org/abs/2301.12345"]  # オプション
 ```
 
-以下で `faiss.index` にインデクスをビルドしておくことができますが、サーバ起動時に `faiss.index` がなければ自動でビルドします。
+以下で `kazusa/faiss.index` にインデクスをビルドしておくことができますが、サーバ起動時に `kazusa/faiss.index` がなければ自動でビルドします。
 ```bash
 python build_index.py
 ```
@@ -47,9 +51,9 @@ python run.py
 ## MCP サーバの使い方
 
 この MCP サーバは現在以下の3つのツールを提供しています。
-- `search_references`: クエリで文献を検索
-- `list_all_references`: 全ての文献をリスト
-- `get_reference_by_arxiv`: arXiv IDで文献を取得
+- `search_references`： クエリで文献を検索
+- `list_all_references`： 全ての文献をリスト
+- `get_reference_by_arxiv`： arXiv IDで文献を取得
 
 ### Claude CLI の場合
 
@@ -59,7 +63,7 @@ python run.py
 claude mcp add --transport stdio kazusa -- python ~/workspace/kazusa/run.py
 ```
 claude を起動後 `/mcp` を実行すると利用できることが確認できます。  
-例えば「どんな文献が登録されていますか？」といったプロンプトで、利用するか確認されるはずです。  
+例えば「かずさは事前学習について何か知っていますか？」といったプロンプトで利用されるはずです。  
 MCP サーバを削除したいときは以下を実行してください。
 ```bash
 claude mcp remove kazusa
@@ -67,29 +71,23 @@ claude mcp remove kazusa
 
 #### 対話例
 ```
-> コールドスタートに関係する文献は？
+> かずさは事前学習について何か知っていますか？
 
-● コールドスタートに関連する文献を検索します。
+● かずさの記憶から事前学習に関する文献を検索してみますね。
 
-● kazusa - search_references (MCP)(query: "コールドスタート", top_k: 5)
+● kazusa - search_references (MCP)(query: "事前学習", top_k: 5)
   ⎿  {
        "result": [
          {
-     … +44 lines (ctrl+o to expand)
+     … +41 lines (ctrl+o to expand)
 
-● kazusa - search_references (MCP)(query: "cold start", top_k: 5)
-  ⎿  {
-       "result": [
-         {
-     … +44 lines (ctrl+o to expand)
+● はい、かずさは事前学習に関連する文献をいくつか記憶しています。以下の文献が見つかりました：
 
-● 検索結果を確認しましたが、現在登録されている文献の中にはコールドスタート問題に直接関連する論文は含まれていません（類似度スコアが全て0.4以下と低い値です）。
-
-  ただし、強いて言えば以下の文献が若干関連性があるかもしれません：
-
-  GPT-3: Language Models are Few-Shot Learners (2020)
-  - arXiv ID: 2005.14165
-  - 類似度スコア: 0.40 (日本語クエリ) / 0.36 (英語クエリ)
-  - 内容: Few-shot学習で様々なタスクをこなせることを示した論文
-  - URL: https://arxiv.org/abs/2005.14165
+  1. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (2018)
+    - arXiv: 1810.04805
+    - 双方向Transformerを使った事前学習モデル。マスク言語モデルとNext Sentence Predictionで学習。
+    - https://arxiv.org/abs/1810.04805
+  2. GPT-3: Language Models are Few-Shot Learners (2020)
+    - arXiv: 2005.14165
+(略)
 ```
