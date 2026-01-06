@@ -5,8 +5,9 @@
 MCP サーバの実装には [fastmcp](https://github.com/jlowin/fastmcp) を使用しています。  
 
 > [!IMPORTANT]
-> この MCP サーバは、あなたが登録した理解を架空の友人「かずさ (Kazusa)」がもつものとします。  
-> 「かずさの記憶にこの言葉はありますか？」といった対話でこの MCP サーバが利用されます。
+> この MCP サーバは、あなたが登録した理解を架空の人物「かずさ」がもつものとします。  
+> 「かずさの記憶にこの言葉はありますか？」といった対話でこの MCP サーバが利用されます。  
+> 環境変数 `KAZUSA_LIBRARIAN_NAME` でお好きな名前に変更することもできます。
 
 ## MCP サーバの立て方
 
@@ -57,14 +58,20 @@ python run.py
 
 ### Claude CLI の場合
 
-この MCP サーバを利用したい場所で以下を実行し MCP サーバを Claude に追加します。  
-パスは適切なものにしてください。  
+この MCP サーバを利用したいディレクトリで以下を実行し MCP サーバを Claude に追加します。  
+このプロジェクトへのパスは適切なものにしてください。  
 ```bash
 claude mcp add --transport stdio kazusa -- python ~/workspace/kazusa/run.py
 ```
-claude を起動後 `/mcp` を実行すると利用できることが確認できます。  
+名前をカスタマイズする場合は以下のようにしてください。
+```bash
+claude mcp add --transport stdio kazusa --env KAZUSA_LIBRARIAN_NAME=アリス \
+  -- python ~/workspace/kazusa/run.py
+```
+claude を起動後 `/mcp` を実行すると `kazusa` が利用できることが確認できます。  
 例えば「かずさは事前学習について何か知っていますか？」といったプロンプトで利用されるはずです。  
-MCP サーバを削除したいときは以下を実行してください。
+
+MCP サーバを削除したいときは以下を実行してください。  
 ```bash
 claude mcp remove kazusa
 ```

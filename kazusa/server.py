@@ -1,4 +1,4 @@
-import sys
+import os
 import importlib.resources
 from typing import List, Dict, Any
 from fastmcp import FastMCP
@@ -8,6 +8,7 @@ from kazusa.index_manager import IndexManager
 
 mcp = FastMCP("Kazusa")
 index_manager: IndexManager | None = None
+librarian_name = os.environ.get("KAZUSA_LIBRARIAN_NAME", "かずさ")
 
 
 def initialize(references_file, index_file):
@@ -20,29 +21,26 @@ def initialize(references_file, index_file):
     )
 
 
-@mcp.tool()
+@mcp.tool(
+    description=f"{librarian_name}の記憶から文献を検索します。"
+    f"{librarian_name}の記憶にある文献についての質問に答えるときに使用してください。"
+)
 def search_references(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
-    """
-    かずさ (Kazusa) の記憶から文献を検索します。
-    かずさの記憶にある文献についての質問に答えるときに使用してください。
-    """
     return index_manager.search(query, top_k)
 
 
-@mcp.tool()
+@mcp.tool(
+    description=f"{librarian_name}が記憶している全ての文献をリストします。"
+    f"{librarian_name}がどんな文献を知っているか確認するときに使用してください。"
+)
 def list_all_references() -> List[Dict[str, Any]]:
-    """
-    かずさ (Kazusa) が記憶している全ての文献をリストします。
-    かずさがどんな文献を知っているか確認するときに使用してください。
-    """
     return index_manager.references
 
 
-@mcp.tool()
+@mcp.tool(
+    description=f"{librarian_name}の記憶から特定の arXiv ID の文献を取得します。"
+)
 def get_reference_by_arxiv(arxiv_id: str) -> Dict[str, Any] | None:
-    """
-    かずさ (Kazusa) の記憶から特定の arXiv ID の文献を取得します。
-    """
     for reference in index_manager.references:
         if reference.get("arxiv_id") == arxiv_id:
             return reference
