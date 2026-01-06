@@ -21,8 +21,10 @@ MCP サーバの実装には [fastmcp](https://github.com/jlowin/fastmcp) を使
 pip install -e .  # torch が環境に既にある場合
 pip install -e ".[torch-cpu]"  # torch が環境にない場合
 # GPU 版の torch を利用の場合は所望の CUDA バージョン対応のものを別途入れてください
-pytest  # 必要に応じて単体テストしてください
-pytest -m "not slow"  # 時間短縮のため一部のテストを省略する場合 (現在あまり時間短縮効果はない)
+
+pip install -e ".[torch-cpu,dev]"  # (開発者向け) 単体テストもしたい場合
+pytest  # 単体テストする
+pytest -m "not slow"  # 時間短縮のため一部のテストを省略するにはこう (現在あまり時間短縮効果はない)
 ```
 
 
@@ -110,5 +112,6 @@ claude mcp remove kazusa
   - Transformerの事前学習手法
   - 文章A + 文章Bを入力とした事前学習を行う
   - https://arxiv.org/abs/1810.04805
-(略)
+  (略)
+  かずさの記憶では、BERTの事前学習手法が最も関連性が高い文献として検索されています。
 ```
