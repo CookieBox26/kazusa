@@ -28,7 +28,7 @@ class IndexManager:
         faiss.write_index(self.index, index_file)
         print(f"Built index: {self.index.ntotal} vectors, {self.index.d} dimensions")
 
-    def __init__(self, embedder, references_file, index_file, force_build=False):
+    def __init__(self, embedder, references_file, index_file, force_rebuild=False):
         self.embedder = embedder
         references_file_path = Path(references_file)
         index_file_path = Path(index_file)
@@ -37,7 +37,7 @@ class IndexManager:
         ).get("references", [])
         self.index = None
         if (
-            (not force_build) and index_file_path.is_file()
+            (not force_rebuild) and index_file_path.is_file()
             and references_file_path.stat().st_mtime <= index_file_path.stat().st_mtime
         ):
             self.index = faiss.read_index(index_file)

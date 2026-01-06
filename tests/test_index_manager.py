@@ -22,6 +22,7 @@ class TestIndexManager:
         Path(type(self).references_file).unlink(missing_ok=True)
         Path(type(self).index_file).unlink(missing_ok=True)
 
+    @pytest.mark.slow
     def test_loads_existing_index_when_newer(self):
         """既存のインデックスファイルがreferencesより新しい場合は読み込む"""
         embedder = Embedder()
@@ -32,6 +33,7 @@ class TestIndexManager:
         index_mtime_after = Path(type(self).index_file).stat().st_mtime
         assert index_mtime_before == index_mtime_after
 
+    @pytest.mark.slow
     def test_rebuilds_when_references_newer(self):
         """referencesファイルがインデックスより新しい場合は再ビルド"""
         embedder = Embedder()
@@ -51,19 +53,21 @@ class TestIndexManager:
         assert index_mtime_after > index_mtime_before
         assert manager2.index.ntotal == 2
 
+    @pytest.mark.slow
     def test_force_build_flag(self):
         """force_build=Trueの場合は必ず再ビルド"""
         embedder = Embedder()
         manager1 = IndexManager(embedder, type(self).references_file, type(self).index_file)
         index_mtime_before = Path(type(self).index_file).stat().st_mtime
         time.sleep(0.1)
-        manager2 = IndexManager(embedder, type(self).references_file, type(self).index_file, force_build=True)
+        manager2 = IndexManager(embedder, type(self).references_file, type(self).index_file, force_rebuild=True)
         index_mtime_after = Path(type(self).index_file).stat().st_mtime
         assert index_mtime_after > index_mtime_before
 
     def test_search_method(self):
         """search()メソッドがクエリ文字列から検索結果を返す"""
         references_file = 'tests/data/references.toml'
+        index_file = 'tests/data/index.index'
         embedder = Embedder()
         index_manager = IndexManager(embedder, references_file, type(self).index_file)
         results = index_manager.search("Transformer", top_k=3)

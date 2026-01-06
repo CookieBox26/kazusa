@@ -5,21 +5,21 @@ description = "文献理解を LLM と共有するための MCP サーバ"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "fastmcp>=2.0.0",
-    "faiss-cpu>=1.7.4",
-    "transformers>=4.30.0",
-    "sentencepiece>=0.1.99",
-    "toml>=0.10.2",
-    "numpy>=1.24.0",
+  "fastmcp>=2.0.0",
+  "faiss-cpu>=1.7.4",
+  "transformers>=4.30.0",
+  "sentencepiece>=0.1.99",
+  "toml>=0.10.2",
+  "numpy>=1.24.0",
 ]
 
 [project.optional-dependencies]
 torch-cpu = [
-    "torch>=2.0.0",
+  "torch>=2.0.0",
 ]
 dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
+  "pytest>=7.0.0",
+  "pytest-asyncio>=0.21.0",
 ]
 
 [build-system]
@@ -31,3 +31,10 @@ py-modules = ["server"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+filterwarnings = [
+  "ignore:.*SwigPy.*has no __module__ attribute.*:DeprecationWarning",
+  "ignore:.*swigvarlink has no __module__ attribute.*:DeprecationWarning",
+]
+markers = [
+  "slow: time-consuming tests"
+]
