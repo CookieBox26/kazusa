@@ -1,17 +1,17 @@
 import json
 import pytest
 import pytest_asyncio
-from pathlib import Path
+import importlib.resources
 from fastmcp.client import Client
 from fastmcp.client.transports import FastMCPTransport
-from server import mcp, initialize
+from kazusa.server import mcp, initialize
 
 
 @pytest_asyncio.fixture
 async def mcp_client():
-    test_root_dir = Path(__file__).parent.parent
-    references_file = test_root_dir / "references.toml"
-    index_file = test_root_dir / "faiss.index"
+    test_data_dir = importlib.resources.files('kazusa').parent / 'tests/data/'
+    references_file = test_data_dir / "references.toml"
+    index_file = test_data_dir / "faiss.index"
     initialize(references_file, index_file)
     async with Client(transport=FastMCPTransport(mcp)) as client:
         yield client
@@ -30,7 +30,7 @@ async def test_list_tools(mcp_client: Client):
 async def test_search_references(mcp_client: Client):
     result = await mcp_client.call_tool(
         name="search_references",
-        arguments={"query": "双方向Transformerを使った事前学習モデル", "top_k": 3}
+        arguments={"query": "Transformer", "top_k": 3}
     )
     data = json.loads(result.content[0].text)
     assert isinstance(data, list)

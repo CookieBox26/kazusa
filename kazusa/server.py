@@ -1,5 +1,5 @@
 import sys
-from pathlib import Path
+import importlib.resources
 from typing import List, Dict, Any
 from fastmcp import FastMCP
 from kazusa.embedder import Embedder
@@ -10,13 +10,13 @@ mcp = FastMCP("Kazusa")
 index_manager: IndexManager | None = None
 
 
-def initialize(references_file: Path, index_file: Path):
+def initialize(references_file, index_file):
     global index_manager
     embedder = Embedder()
     index_manager = IndexManager(
         embedder,
-        references_file.as_posix(),
-        index_file.as_posix(),
+        references_file,
+        index_file,
     )
 
 
@@ -42,7 +42,7 @@ def get_reference_by_arxiv(arxiv_id: str) -> Dict[str, Any] | None:
 
 
 if __name__ == "__main__":
-    root_dir = Path(__file__).parent
+    root_dir = importlib.resources.files('kazusa')
     references_file = root_dir / "references.toml"
     index_file = root_dir / "faiss.index"
     initialize(references_file, index_file)

@@ -39,7 +39,7 @@ python build_index.py
 
 以下で MCP サーバが起動します。初回起動時または前回起動時から `references.toml` が更新された場合、サーバは自動的にインデクスをリビルドします。
 ```bash
-python server.py
+python run.py
 ```
 
 なお、**この MCP サーバをローカルの Claude から利用する場合は MCP サーバを起動しておく必要はありません** (Claude が自動的にサーバを起動します)。
@@ -56,7 +56,7 @@ python server.py
 この MCP サーバを利用したい場所で以下を実行し MCP サーバを Claude に追加します。  
 パスは適切なものにしてください。  
 ```bash
-claude mcp add --transport stdio kazusa -- python ~/workspace/kazusa/server.py
+claude mcp add --transport stdio kazusa -- python ~/workspace/kazusa/run.py
 ```
 claude を起動後 `/mcp` を実行すると利用できることが確認できます。  
 例えば「どんな文献が登録されていますか？」といったプロンプトで、利用するか確認されるはずです。  
